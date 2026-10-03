@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Analyzer | CyberSafe</title>
+
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/analyzer.css">
+</head>
+
+<body>
+
+<!-- NAVBAR -->
+
+<nav class="navbar">
+
+    <div class="brand">
+        <div class="brand-icon">🛡️</div>
+
+        <div>
+            <h2>CyberSafe</h2>
+            <span>Stay Alert. Stay Safe.</span>
+        </div>
+    </div>
+
+    <div class="nav-links">
+
+        <a href="index.html">Home</a>
+
+        <a href="analyzer.html" class="active">
+            Analyzer
+        </a>
+
+        <a href="awareness.html">
+            Awareness
+        </a>
+
+        <a href="index.html#safety">
+            Safety Tips
+        </a>
+
+        <a href="index.html#about">
+            About
+        </a>
+
+    </div>
+
+    <button class="menu-btn">
+        ☰
+    </button>
+
+</nav>
+
+
+<!-- PAGE HEADER -->
+
+<section class="analyzer-hero">
+
+    <span class="page-badge">
+        🔍 SECURITY ANALYZER
+    </span>
+
+    <h1>
+        Check Before You
+        <span>Click.</span>
+    </h1>
+
+    <p>
+        Paste a suspicious message or URL, or upload a screenshot.
+        Our rule-based analyzer checks for common phishing patterns,
+        suspicious links and high-risk keywords.
+    </p>
+
+</section>
+
+
+<!-- ANALYZER -->
+
+<main class="analyzer-container">
+
+    <div class="analyzer-card">
+
+        <!-- TABS -->
+
+        <div class="analyzer-tabs">
+
+            <button
+                class="tab active"
+                data-type="message">
+
+                📝 Message
+            </button>
+
+            <button
+                class="tab"
+                data-type="url">
+
+                🔗 URL
+            </button>
+
+            <button
+                class="tab"
+                data-type="image">
+
+                🖼️ Screenshot
+            </button>
+
+        </div>
+
+
+        <!-- MESSAGE -->
+
+        <div
+            id="messagePanel"
+            class="input-panel active">
+
+            <label>
+                Paste suspicious message
+            </label>
+
+            <textarea
+                id="messageInput"
+                placeholder="Example: Your bank account will be blocked today. Verify your KYC immediately by clicking this link..."
+            ></textarea>
+
+            <div class="input-footer">
+
+                <span>
+                    🔒 Your input is analyzed locally for this demo.
+                </span>
+
+                <span id="charCount">
+                    0 characters
+                </span>
+
+            </div>
+
+        </div>
+
+
+        <!-- URL -->
+
+        <div
+            id="urlPanel"
+            class="input-panel">
+
+            <label>
+                Enter suspicious URL
+            </label>
+
+            <input
+                type="url"
+                id="urlInput"
+                placeholder="https://example.com/login"
+            >
+
+            <div class="url-info">
+                🔗 Check suspicious URL structure and patterns.
+            </div>
+
+        </div>
+
+
+        <!-- IMAGE -->
+
+        <div
+            id="imagePanel"
+            class="input-panel">
+
+            <label>
+                Upload a screenshot or suspicious poster
+            </label>
+
+            <div class="upload-area">
+
+                <div class="upload-icon">
+                    🖼️
+                </div>
+
+                <h3>
+                    Drop your image here
+                </h3>
+
+                <p>
+                    or choose an image from your device
+                </p>
+
+                <label class="upload-button">
+
+                    Choose Image
+
+                    <input
+                        type="file"
+                        id="imageInput"
+                        accept="image/*"
+                        hidden
+                    >
+
+                </label>
+
+                <div
+                    id="imagePreview"
+                    class="image-preview">
+                </div>
+
+            </div>
+
+            <div class="image-note">
+                ℹ️ Text from the image can be extracted and analyzed.
+                This does not scan the image file itself for malware.
+            </div>
+
+        </div>
+
+
+        <!-- ANALYZE BUTTON -->
+
+        <button
+            id="analyzeButton"
+            class="main-analyze-button">
+
+            🔍 Analyze for Risk
+
+        </button>
+
+
+        <!-- LOADING -->
+
+        <div
+            id="loading"
+            class="loading">
+
+            <div class="spinner"></div>
+
+            <p>
+                Analyzing security indicators...
+            </p>
+
+        </div>
+
+
+    </div>
+
+
+    <!-- RESULT -->
+
+    <section
+        id="resultSection"
+        class="result-section">
+
+        <div class="result-header">
+
+            <span>
+                ANALYSIS RESULT
+            </span>
+
+            <h2>
+                Security Assessment
+            </h2>
+
+        </div>
+
+        
+        <div
+            id="detectedContentBox"
+            class="detected-content-box"
+            style="display: none;">
+
+            <div class="detected-content-header">
+
+                <div class="detected-icon">
+                    🖼️
+                </div>
+
+                <div>
+                    <h3>Screenshot Analysis</h3>
+
+                    <p>
+                        Text successfully extracted from the uploaded image
+                    </p>
+                </div>
+
+            </div>
+
+            <div class="ocr-confidence">
+                <span>OCR Confidence</span>
+                <strong id="ocrConfidence">0%</strong>
+            </div>
+
+            <div class="detected-message-title">
+                Detected Message
+            </div>
+
+            <div
+                id="detectedText"
+                class="detected-text">
+            </div>
+
+        </div>
+
+
+
+        <div class="result-card">
+
+            <div class="risk-circle">
+
+                <div>
+                    <strong id="riskScore">
+                        0
+                    </strong>
+
+                    <small>
+                        / 100
+                    </small>
+                </div>
+
+            </div>
+
+
+            <div class="risk-info">
+
+                <span>
+                    RISK LEVEL
+                </span>
+
+                <h2 id="riskLevel">
+                    -
+                </h2>
+
+                <p id="riskSummary">
+                    Analysis result will appear here.
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <!-- REASONS -->
+
+        <div class="result-grid">
+
+            <div class="result-box">
+
+                <h3>
+                    🚨 Why was it flagged?
+                </h3>
+
+                <ul id="riskReasons">
+                </ul>
+
+            </div>
+
+
+            <div class="result-box">
+
+                <h3>
+                    🛡️ What should you do?
+                </h3>
+
+                <ul id="recommendations">
+                </ul>
+
+            </div>
+
+        </div>
+
+
+        <div class="disclaimer">
+
+            <strong>⚠️ Important:</strong>
+
+            This is a first-level cyber-safety warning system.
+            A result does not guarantee that a message or URL is
+            safe or malicious. Always verify suspicious requests
+            through official channels.
+
+        </div>
+
+    </section>
+
+</main>
+
+
+<script src="data/keyword-rules.js"></script>
+<script src="data/url-rules.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
+<script src="js/risk-engine.js"></script>
+<script src="js/analyzer-ui.js"></script>
+
+</body>
+</html>
