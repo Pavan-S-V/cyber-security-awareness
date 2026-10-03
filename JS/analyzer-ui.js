@@ -1,53 +1,28 @@
-const messagePanel =
-    document.getElementById("messagePanel");
+const messagePanel = document.getElementById("messagePanel");
+const urlPanel = document.getElementById("urlPanel");
+const imagePanel = document.getElementById("imagePanel");
 
-const urlPanel =
-    document.getElementById("urlPanel");
+const tabs = document.querySelectorAll(".tab");
 
-const imagePanel =
-    document.getElementById("imagePanel");
+const messageInput = document.getElementById("messageInput");
+const urlInput = document.getElementById("urlInput");
 
-const tabs =
-    document.querySelectorAll(".tab");
+const analyzeButton = document.getElementById("analyzeButton");
+const loading = document.getElementById("loading");
 
-const messageInput =
-    document.getElementById("messageInput");
+const resultSection = document.getElementById("resultSection");
 
-const urlInput =
-    document.getElementById("urlInput");
+const riskScore = document.getElementById("riskScore");
+const riskLevel = document.getElementById("riskLevel");
+const riskSummary = document.getElementById("riskSummary");
 
-const analyzeButton =
-    document.getElementById("analyzeButton");
+const riskReasons = document.getElementById("riskReasons");
+const recommendations = document.getElementById("recommendations");
 
-const loading =
-    document.getElementById("loading");
+const charCount = document.getElementById("charCount");
 
-const resultSection =
-    document.getElementById("resultSection");
-
-const riskScore =
-    document.getElementById("riskScore");
-
-const riskLevel =
-    document.getElementById("riskLevel");
-
-const riskSummary =
-    document.getElementById("riskSummary");
-
-const riskReasons =
-    document.getElementById("riskReasons");
-
-const recommendations =
-    document.getElementById("recommendations");
-
-const charCount =
-    document.getElementById("charCount");
-
-const imageInput =
-    document.getElementById("imageInput");
-
-const imagePreview =
-    document.getElementById("imagePreview");
+const imageInput = document.getElementById("imageInput");
+const imagePreview = document.getElementById("imagePreview");
 
 const detectedContentBox =
     document.getElementById("detectedContentBox");
@@ -58,6 +33,7 @@ const detectedText =
 const ocrConfidence =
     document.getElementById("ocrConfidence");
 
+    
 let currentType = "message";
 
 
@@ -73,30 +49,22 @@ tabs.forEach(tab => {
 
         tab.classList.add("active");
 
-        currentType =
-            tab.dataset.type;
+        currentType = tab.dataset.type;
 
         messagePanel.classList.remove("active");
         urlPanel.classList.remove("active");
         imagePanel.classList.remove("active");
 
-
         if (currentType === "message") {
-
             messagePanel.classList.add("active");
-
         }
 
         if (currentType === "url") {
-
             urlPanel.classList.add("active");
-
         }
 
         if (currentType === "image") {
-
             imagePanel.classList.add("active");
-
         }
 
     });
@@ -106,224 +74,349 @@ tabs.forEach(tab => {
 
 /* ================= CHARACTER COUNT ================= */
 
-messageInput.addEventListener(
-    "input",
-    () => {
+messageInput.addEventListener("input", () => {
 
-        charCount.textContent =
-            `${messageInput.value.length} characters`;
+    charCount.textContent =
+        `${messageInput.value.length} characters`;
 
-    }
-);
+});
 
 
 /* ================= IMAGE PREVIEW ================= */
 
-imageInput.addEventListener(
-    "change",
-    () => {
+imageInput.addEventListener("change", () => {
 
-        const file =
-            imageInput.files[0];
+    const file = imageInput.files[0];
 
-        if (!file) return;
+    if (!file) return;
 
-        const reader =
-            new FileReader();
+    const reader = new FileReader();
 
-        reader.onload = function(event) {
+    reader.onload = function(event) {
 
-            imagePreview.innerHTML = `
-                <img
-                    src="${event.target.result}"
-                    alt="Uploaded screenshot"
-                >
-            `;
+        imagePreview.innerHTML = `
+            <img
+                src="${event.target.result}"
+                alt="Uploaded screenshot"
+            >
+        `;
 
-        };
+    };
 
-        reader.readAsDataURL(file);
+    reader.readAsDataURL(file);
 
-    }
-);
+});
 
 
 /* ================= ANALYZE ================= */
 
-analyzeButton.addEventListener(
-    "click",
-    async () => {
+analyzeButton.addEventListener("click", async () => {
 
-        let input = "";
+    let input = "";
 
-        detectedContentBox.style.display = "none";
+    detectedContentBox.style.display = "none";
 
-        if (currentType === "message") {
+    /* ================= MESSAGE ================= */
 
-            input =
-                messageInput.value.trim();
+    if (currentType === "message") {
+
+        input = messageInput.value.trim();
+
+    }
+
+
+    /* ================= URL ================= */
+
+    if (currentType === "url") {
+
+        input = urlInput.value.trim();
+
+    }
+
+
+    /* ================= SCREENSHOT / AI ================= */
+
+    if (currentType === "image") {
+
+        const file = imageInput.files[0];
+
+        if (!file) {
+
+            alert("Please upload a screenshot first.");
+
+            return;
 
         }
 
-        if (currentType === "url") {
+        loading.style.display = "block";
+        resultSection.style.display = "none";
 
-            input =
-                urlInput.value.trim();
+        document.querySelector(".loading p").textContent =
+            "AI is reading the screenshot...";
 
-        }
+        try {
+
+            /* Create FormData */
+
+            const formData = new FormData();
+
+            formData.append("image", file);
 
 
-        /* Screenshot currently only previews */
+            /* Send image to Node.js backend */
 
-        if (currentType === "image") {
+            const response = await fetch(
+                "/api/analyze-image",
+                {
+                    method: "POST",
+                    body: formData
+                }
+            );
 
-            const file = imageInput.files[0];
 
-            if (!file) {
-                alert("Please upload a screenshot first.");
-                return;
+            /* Check server response */
+
+            if (!response.ok) {
+
+                throw new Error(
+                    "AI image analysis failed."
+                );
+
             }
 
-            loading.style.display = "block";
+
+            /* Get AI result */
+
+            const aiResult =
+                await response.json();
+
+
+            /* Actual extracted text */
+
+            const extractedText =
+                aiResult.extractedText || "";
+
+
+            /* AI extraction confidence */
+
+            const confidence = Math.round(
+                (Number(aiResult.confidence) || 0) * 100
+            );
+
+
+            /* ================= SHOW SCREENSHOT RESULT ================= */
+
+            detectedText.textContent =
+                extractedText ||
+                "No readable text detected.";
+
+
+            detectedContentBox.style.display =
+                "block";
+
+
+            ocrConfidence.textContent =
+                `${confidence}%`;
+
+
+            /* ================= ANALYZE EXTRACTED TEXT ================= */
+
+            if (!extractedText.trim()) {
+
+                loading.style.display = "none";
+
+                displayResult({
+
+                    score: 0,
+
+                    level: "LOW",
+
+                    reasons: [
+                        "No readable text was detected in the uploaded image."
+                    ],
+
+                    recommendations: [
+                        "Upload a clearer screenshot with readable text."
+                    ]
+
+                });
+
+                return;
+
+            }
+
+
+            document.querySelector(".loading p").textContent =
+                "Analyzing extracted text...";
+
+
+            /* Small professional loading delay */
+
+            await new Promise(resolve =>
+                setTimeout(resolve, 4500)
+            )
+
+
+            /* Send AI-extracted text to existing risk engine */
+
+            const result =
+                analyzeInput(
+                    extractedText,
+                    "message"
+                );
+
+
+            /* Hide loading */
+
+            loading.style.display = "none";
+
+
+            /* Display risk result */
+
+            displayResult(result);
+
+        }
+
+        catch (error) {
+
+            console.error(
+                "Screenshot analysis error:",
+                error
+            );
+
+            loading.style.display = "none";
+
+            alert(
+                "Could not analyze the screenshot. Please make sure the server is running and try again."
+            );
+
+        }
+
+        return;
+
+    }
+
+
+
+    /* ================= MESSAGE URL VALIDATION ================= */
+
+    if (currentType === "message") {
+
+        const onlyURL =
+            /^(https?:\/\/|www\.)[^\s]+$/i.test(input);
+
+        if (onlyURL) {
+
             resultSection.style.display = "none";
 
-            try {
-
-                const result = await Tesseract.recognize(
-                    file,
-                    "eng",
-                    {
-                        logger: info => {
-
-                            if (info.status === "recognizing text") {
-
-                                const percent =
-                                    Math.round(info.progress * 100);
-
-                                document.querySelector(
-                                    ".loading p"
-                                ).textContent =
-                                    `Reading screenshot... ${percent}%`;
-
-                            }
-
-                        }
-                    }
-                );
-
-
-                const extractedText =
-                    result.data.text.trim();
-
-                if (!extractedText) {
-
-                    loading.style.display = "none";
-
-                    alert(
-                        "No readable text was found in this image."
-                    );
-
-                    return;
-                }
-
-
-                /* OCR CONFIDENCE */
-
-                const confidence =
-                    Math.round(result.data.confidence || 0);
-
-                ocrConfidence.textContent =
-                    confidence + "%";
-
-
-                /* SHOW DETECTED MESSAGE */
-
-                detectedText.textContent =
-                    extractedText;
-
-                detectedContentBox.style.display =
-                    "block";
-
-
-                document.querySelector(
-                    ".loading p"
-                ).textContent =
-                    "Analyzing extracted text...";
-
-                await new Promise(
-                    resolve => setTimeout(resolve, 500)
-                );
-
-                
-                const analysis =
-                    analyzeInput(
-                        extractedText,
-                        "message"
-                    );
-
-                loading.style.display = "none";
-
-                displayResult(analysis);
-
-            } catch (error) {
-
-                console.error(error);
-
-                loading.style.display = "none";
-
-                alert(
-                    "Could not read the screenshot. Please try a clearer image."
-                );
-            }
+            alert(
+                "This looks like a URL. Please use the URL tab to analyze it."
+            );
 
             return;
         }
+    }
 
 
-        if (!input) {
+    /* ================= URL VALIDATION ================= */
+
+    if (currentType === "url") {
+
+        let validURL = false;
+
+        try {
+
+            const parsedURL = new URL(input);
+
+            validURL =
+                (parsedURL.protocol === "http:" ||
+                parsedURL.protocol === "https:") &&
+                parsedURL.hostname.includes(".");
+
+        } catch (error) {
+
+            validURL = false;
+
+        }
+
+
+        if (!validURL) {
 
             alert(
-                "Please enter a message or URL first."
+                "Please enter a URL or Link, that starts with http:// or https:// and contains a valid domain."
             );
 
             return;
 
         }
 
-
-        /* Show loading */
-
-        loading.style.display = "block";
-
-        resultSection.style.display = "none";
+    }
 
 
-        await new Promise(
-            resolve =>
-                setTimeout(resolve, 700)
+    /* ================= NORMAL ANALYSIS ================= */
+
+    loading.style.display = "block";
+
+    resultSection.style.display = "none";
+
+    const loadingText =
+        document.querySelector(".loading p");
+
+    const analysisSteps = [
+        "Reading the submitted content...",
+        "Checking suspicious patterns...",
+        "Analyzing security indicators...",
+        "Calculating risk score...",
+        "Preparing security recommendations..."
+    ];
+
+    let stepIndex = 0;
+
+    loadingText.textContent =
+        analysisSteps[stepIndex];
+
+    const stepTimer = setInterval(() => {
+
+        stepIndex++;
+
+        if (stepIndex < analysisSteps.length) {
+
+            loadingText.textContent =
+                analysisSteps[stepIndex];
+
+        }
+
+    }, 850);
+
+
+    /* Keep the analysis screen visible for about 4.5 seconds */
+
+    await new Promise(resolve =>
+        setTimeout(resolve, 4500)
+    );
+
+    clearInterval(stepTimer);
+
+
+    /* Existing risk engine */
+
+    const result =
+        analyzeInput(
+            input,
+            currentType
         );
 
 
-        /* REAL ANALYSIS */
+    /* Hide loading */
 
-        const result =
-            analyzeInput(
-                input,
-                currentType
-            );
+    loading.style.display = "none";
 
 
-        /* Hide loading */
+    /* Show result */
 
-        loading.style.display = "none";
+    displayResult(result);
 
-
-        /* Show result */
-
-        displayResult(result);
-
-    }
-);
+});
 
 
 /* ================= DISPLAY RESULT ================= */
@@ -333,19 +426,24 @@ function displayResult(result) {
     resultSection.style.display = "block";
 
 
+    /* Score */
+
     riskScore.textContent =
         result.score;
 
+
+    /* Level */
 
     riskLevel.textContent =
         result.level;
 
 
-    /* Level color */
+    /* ================= LEVEL ================= */
 
     if (result.level === "HIGH") {
 
-        riskLevel.style.color = "#ef4444";
+        riskLevel.style.color =
+            "#ef4444";
 
         riskSummary.textContent =
             "High-risk indicators were detected. Avoid interacting with this content.";
@@ -354,7 +452,8 @@ function displayResult(result) {
 
     else if (result.level === "MEDIUM") {
 
-        riskLevel.style.color = "#f59e0b";
+        riskLevel.style.color =
+            "#f59e0b";
 
         riskSummary.textContent =
             "Some suspicious indicators were detected. Verify before taking action.";
@@ -363,7 +462,8 @@ function displayResult(result) {
 
     else {
 
-        riskLevel.style.color = "#16a34a";
+        riskLevel.style.color =
+            "#16a34a";
 
         riskSummary.textContent =
             "No major suspicious indicators were detected.";
@@ -371,7 +471,7 @@ function displayResult(result) {
     }
 
 
-    /* Reasons */
+    /* ================= REASONS ================= */
 
     riskReasons.innerHTML = "";
 
@@ -380,14 +480,15 @@ function displayResult(result) {
         const li =
             document.createElement("li");
 
-        li.textContent = reason;
+        li.textContent =
+            reason;
 
         riskReasons.appendChild(li);
 
     });
 
 
-    /* Recommendations */
+    /* ================= RECOMMENDATIONS ================= */
 
     recommendations.innerHTML = "";
 
@@ -396,18 +497,22 @@ function displayResult(result) {
         const li =
             document.createElement("li");
 
-        li.textContent = item;
+        li.textContent =
+            item;
 
         recommendations.appendChild(li);
 
     });
 
 
-    /* Scroll to result */
+    /* ================= SCROLL ================= */
 
     resultSection.scrollIntoView({
+
         behavior: "smooth",
+
         block: "start"
+
     });
 
 }
