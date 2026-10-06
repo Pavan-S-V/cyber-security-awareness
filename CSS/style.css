@@ -102,27 +102,32 @@ body {
 
 
 .brand-icon {
-
-    width: 42px;
-    height: 42px;
+    width: 48px;
+    height: 48px;
 
     display: flex;
     align-items: center;
     justify-content: center;
 
+    overflow: hidden;
+
     border-radius: 13px;
 
-    color: #ffffff;
-
-    background:
-        linear-gradient(
-            135deg,
-            var(--primary),
-            var(--purple)
-        );
+    background: #ffffff;
 
     box-shadow:
-        0 8px 22px rgba(23,105,255,0.20);
+        0 6px 20px rgba(23, 105, 255, 0.16);
+
+    flex-shrink: 0;
+}
+
+.brand-icon img {
+    width: 100%;
+    height: 100%;
+
+    object-fit: contain;
+
+    display: block;
 }
 
 
@@ -2345,6 +2350,47 @@ body {
     opacity: .7;
 }
 
+.footer .brand-icon {
+    width: 52px;
+    height: 52px;
+
+    border-radius: 14px;
+
+    background: #ffffff;
+
+    box-shadow:
+        0 8px 25px rgba(0, 0, 0, 0.20);
+}
+
+
+.footer .brand-icon {
+    width: 54px;
+    height: 54px;
+
+    padding: 2px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    overflow: hidden;
+
+    border-radius: 15px;
+
+    background: #ffffff;
+
+    box-shadow:
+        0 8px 25px rgba(0, 0, 0, 0.22);
+}
+
+.footer .brand-icon img {
+    width: 100%;
+    height: 100%;
+
+    object-fit: contain;
+
+    display: block;
+}
 
 /* =========================================================
    FOOTER RESPONSIVE
@@ -2388,3 +2434,4 @@ body {
     }
 
 }
+
