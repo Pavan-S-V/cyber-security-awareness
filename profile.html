@@ -1,0 +1,181 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Profile | CyberSafe</title>
+    <link rel="stylesheet" href="CSS/style.css">
+    <style>
+        .profile-page {
+            max-width: 720px;
+            margin: 55px auto;
+            padding: 24px;
+        }
+        .profile-card {
+            padding: 35px;
+            border: 1px solid #e1e9f8;
+            border-radius: 24px;
+            background: #fff;
+            box-shadow: 0 18px 55px rgba(25, 55, 110, .09);
+            text-align: center;
+        }
+        .profile-photo {
+            width: 110px;
+            height: 110px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 4px solid #e8efff;
+            margin-bottom: 15px;
+        }
+        .profile-card h1 {
+            color: #17315e;
+            margin: 10px 0;
+        }
+        .profile-subtitle {
+            color: #7182a0;
+            margin-bottom: 30px;
+        }
+        .profile-field {
+            text-align: left;
+            margin: 18px 0;
+        }
+        .profile-field label {
+            display: block;
+            color: #7182a0;
+            font-size: 13px;
+            margin-bottom: 7px;
+        }
+        .profile-field input {
+            box-sizing: border-box;
+            width: 100%;
+            padding: 13px 14px;
+            border: 1px solid #dce5f5;
+            border-radius: 10px;
+            background: #f8faff;
+            color: #20375d;
+            font: inherit;
+        }
+        .profile-actions {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-top: 25px;
+        }
+        .profile-actions a, .profile-actions button {
+            display: inline-block;
+            padding: 12px 20px;
+            border: 0;
+            border-radius: 10px;
+            background: #2864ff;
+            color: white;
+            text-decoration: none;
+            font: inherit;
+            cursor: pointer;
+        }
+        .profile-actions .back-button {
+            background: #eef3ff;
+            color: #21457f;
+        }
+        #profileMessage {
+            color: #b42336;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <main class="profile-page">
+        <section class="profile-card">
+            <img id="userAvatar"
+                 class="profile-photo"
+                 src="assets/images/icons/cybersafe-logo.png"
+                 alt="Profile picture">
+
+            <h1 id="userName">Loading profile...</h1>
+            <p class="profile-subtitle">Your CyberSafe account</p>
+
+            <div class="profile-field">
+                <label for="fullName">Full name</label>
+                <input id="fullName" readonly>
+            </div>
+
+            <div class="profile-field">
+                <label for="email">Email address</label>
+                <input id="email" type="email" readonly>
+            </div>
+
+            <div class="profile-field">
+                <label for="provider">Sign-in method</label>
+                <input id="provider" readonly>
+            </div>
+
+            <p id="profileMessage"></p>
+
+            <div class="profile-actions">
+                <a href="index.html" class="back-button">Back to Home</a>
+                <button id="signOutButton" type="button">Sign Out</button>
+            </div>
+        </section>
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="JS/auth.js"></script>
+    <script>
+    document.addEventListener("DOMContentLoaded", async () => {
+        const message = document.getElementById("profileMessage");
+        const client = window.supabaseClient;
+
+        if (!client) {
+            message.textContent = "Authentication could not be loaded.";
+            return;
+        }
+
+        try {
+            const { data, error } = await client.auth.getSession();
+            if (error) throw error;
+
+            const user = data.session?.user;
+            if (!user) {
+                window.location.replace("/login.html");
+                return;
+            }
+
+            const metadata = user.user_metadata || {};
+            const name = metadata.full_name ||
+                         metadata.name ||
+                         user.email?.split("@")[0] ||
+                         "CyberSafe User";
+
+            document.getElementById("userName").textContent = name;
+            document.getElementById("fullName").value = name;
+            document.getElementById("email").value = user.email || "";
+            document.getElementById("provider").value =
+                user.app_metadata?.provider || "Email";
+
+            const avatar = document.getElementById("userAvatar");
+            avatar.src = metadata.avatar_url ||
+                         metadata.picture ||
+                         "assets/images/icons/cybersafe-logo.png";
+
+            avatar.onerror = () => {
+                avatar.onerror = null;
+                avatar.src = "assets/images/icons/cybersafe-logo.png";
+            };
+        } catch (error) {
+            console.error(error);
+            message.textContent = "Could not load your profile. Please refresh.";
+        }
+
+        document.getElementById("signOutButton").addEventListener("click", async () => {
+            const { error } = await client.auth.signOut();
+            if (error) {
+                message.textContent = "Sign out failed. Please try again.";
+                return;
+            }
+            window.location.replace("/login.html");
+        });
+    });
+    </script>
+</body>
+</html>

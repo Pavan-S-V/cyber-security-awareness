@@ -2435,3 +2435,124 @@ body {
 
 }
 
+
+/* ===== CyberSafe User Profile ===== */
+.profile-menu {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+}
+
+.profile-button {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    padding: 7px 12px;
+    border: 1px solid #dce6f7;
+    border-radius: 14px;
+    background: #fff;
+    color: #17315e;
+    font: inherit;
+    font-weight: 600;
+    cursor: pointer;
+    transition: .2s ease;
+}
+
+.profile-button:hover {
+    background: #f2f6ff;
+    border-color: #8aabff;
+}
+
+.profile-button img {
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid #e1eaff;
+}
+
+.profile-dropdown {
+    display: none;
+    position: absolute;
+    top: calc(100% + 12px);
+    right: 0;
+    z-index: 1000;
+    width: 245px;
+    padding: 12px;
+    border: 1px solid #e0e8f8;
+    border-radius: 16px;
+    background: #fff;
+    box-shadow: 0 16px 45px rgba(24, 50, 100, .16);
+}
+
+.profile-dropdown.open {
+    display: block;
+    animation: profileAppear .18s ease-out;
+}
+
+.profile-details {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    padding: 12px 10px;
+    margin-bottom: 8px;
+    border-bottom: 1px solid #edf1f8;
+    overflow-wrap: anywhere;
+}
+
+.profile-details strong {
+    color: #17315e;
+    font-size: 14px;
+}
+
+.profile-details span {
+    color: #7585a2;
+    font-size: 12px;
+}
+
+.profile-dropdown button {
+    display: block;
+    width: 100%;
+    padding: 11px 10px;
+    border: 0;
+    border-radius: 9px;
+    background: transparent;
+    color: #243b63;
+    text-align: left;
+    font: inherit;
+    cursor: pointer;
+}
+
+.profile-dropdown button:hover {
+    background: #f1f5ff;
+}
+
+.profile-dropdown .sign-out-button {
+    color: #d92d43;
+}
+
+@keyframes profileAppear {
+    from {
+        opacity: 0;
+        transform: translateY(-5px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@media (max-width: 768px) {
+    .profile-button {
+        padding: 5px;
+    }
+
+    .profile-button #profileName {
+        display: none;
+    }
+
+    .profile-dropdown {
+        right: 0;
+        width: 225px;
+    }
+}
