@@ -154,6 +154,8 @@
     </a>
 
     <div class="nav-links">
+    
+
         <a href="index.html" class="active">Home</a>
         <a href="analyzer.html">Analyzer</a>
         <a href="awareness.html">Awareness</a>
@@ -188,10 +190,7 @@
                     Loading your account...
                 </div>
 
-                <button type="button" id="myProfileButton">
-                    My Profile
-                </button>
-
+                <a href="/profile.html" id="myProfileButton" class="profile-link" onclick="window.location.href='/profile.html'; return false;">My Profile</a>
                 <button
                     type="button"
                     id="signOutButton"
@@ -632,7 +631,7 @@
 
     <div class="footer-bottom">
         <span>
-            © 2026 CyberSafe. Educational cybersecurity awareness project.
+            © 2026 CyberSafe. All rights reserved. Built with care for digital safety.
         </span>
         <span>Think Before You Click.</span>
     </div>
@@ -643,6 +642,7 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="JS/auth.js"></script>
 <script src="JS/app.js"></script>
+
 
 <script>
 document.addEventListener("DOMContentLoaded", async function () {
@@ -668,10 +668,7 @@ document.addEventListener("DOMContentLoaded", async function () {
         return;
     }
 
-    profileButton.addEventListener("click", function () {
-        const isOpen = profileDropdown.classList.toggle("open");
-        profileButton.setAttribute("aria-expanded", String(isOpen));
-    });
+
 
     document.addEventListener("click", function (event) {
         if (!profileMenu.contains(event.target)) {
@@ -685,20 +682,21 @@ document.addEventListener("DOMContentLoaded", async function () {
         profileAvatar.src = "assets/images/icons/cybersafe-logo.png";
     };
 
+
     async function loadUserProfile() {
         const { data, error } = await client.auth.getSession();
 
         if (error) {
-            console.error("Could not load session:", error.message);
+            console.error("Profile loading error:", error.message);
             profileName.textContent = "Profile unavailable";
-            profileStatus.textContent = "Could not load your session.";
+            profileStatus.textContent = "Unable to load your account.";
             return;
         }
 
-        const user = data.session && data.session.user;
+        const user = data.session?.user;
 
         if (!user) {
-            window.location.replace("/login.html");
+            window.location.href = "/login.html";
             return;
         }
 
@@ -707,29 +705,23 @@ document.addEventListener("DOMContentLoaded", async function () {
             metadata.full_name ||
             metadata.name ||
             user.email?.split("@")[0] ||
-            "CyberSafe User";
+            "User";
 
         const picture =
             metadata.avatar_url ||
             metadata.picture ||
-            metadata.profile_picture ||
-            "assets/images/icons/cybersafe-logo.png";
-
-        profileAvatar.referrerPolicy = "no-referrer";
-        profileAvatar.src = picture;
+            metadata.profile_picture;
 
         profileName.textContent = displayName;
         dropdownName.textContent = displayName;
         dropdownEmail.textContent = user.email || "";
-        profileAvatar.src = picture;
         profileStatus.textContent = "Signed in with Google";
 
-
-        myProfileButton.addEventListener("click", function () {
-            window.location.href = "/profile.html";
-        });
-
+        if (picture) {
+            profileAvatar.src = picture;
+        }
     }
+
 
     signOutButton.addEventListener("click", async function () {
         signOutButton.disabled = true;

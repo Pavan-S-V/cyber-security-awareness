@@ -19,47 +19,129 @@
     <!-- ================= NAVBAR ================= -->
 
     <header class="main-navbar">
-
         <div class="nav-container">
 
             <a href="index.html" class="brand">
-
-                <div class="brand-icon">
-                    🛡️
-                </div>
-
+                <div class="brand-icon">🛡️</div>
                 <div class="brand-text">
                     <strong>CyberSafe</strong>
                     <span>Stay Alert. Stay Safe.</span>
                 </div>
-
             </a>
 
-            <nav class="nav-links">
-
-                <a href="index.html">
-                    Home
-                </a>
-
-                <a href="analyzer.html">
-                    Analyzer
-                </a>
-
-                <a href="awareness.html" class="active">
-                    Awareness
-                </a>
-
-                <a href="awareness.html#safety">
-                    Safety Tips
-                </a>
-
+            <nav class="nav-links" id="awarenessNavLinks">
+                <a href="index.html">Home</a>
+                <a href="analyzer.html">Analyzer</a>
+                <a href="awareness.html" class="active">Awareness</a>
+                <a href="awareness.html#safety">Safety Tips</a>
                 <a href="about.html">About</a>
-
             </nav>
 
-        </div>
+            <button
+                type="button"
+                id="awarenessMenuButton"
+                aria-label="Open navigation menu"
+                aria-expanded="false"
+                style="display:block!important; width:44px; height:44px; flex-shrink:0; font-size:26px; color:#14213d; background:#fff; border:1px solid #ddd; border-radius:8px; cursor:pointer; position:relative; z-index:10001;">
+                ☰
+            </button>
 
+        </div>
     </header>
+
+    <style>
+    @media (max-width: 768px) {
+        .main-navbar .nav-container {
+            display: flex !important;
+            align-items: center !important;
+            justify-content: space-between !important;
+            flex-wrap: wrap !important;
+            position: relative !important;
+        }
+
+        #awarenessNavLinks {
+            display: none !important;
+            flex-direction: column !important;
+            align-items: stretch !important;
+            position: absolute !important;
+            top: 100% !important;
+            left: 0 !important;
+            right: 0 !important;
+            width: 100% !important;
+            box-sizing: border-box !important;
+            padding: 16px !important;
+            gap: 16px !important;
+            background: #fff !important;
+            border-radius: 12px !important;
+            box-shadow: 0 8px 25px rgba(0,0,0,.15) !important;
+            z-index: 10000 !important;
+        }
+
+        #awarenessNavLinks.menu-visible {
+            display: flex !important;
+        }
+
+        #awarenessNavLinks a {
+            display: block !important;
+            padding: 10px !important;
+            color: #14213d !important;
+        }
+    }
+
+    @media (min-width: 769px) {
+        #awarenessMenuButton {
+            display: none !important;
+        }
+    }
+
+
+    @media (max-width: 768px) {
+        #awarenessMenuButton {
+            position: absolute !important;
+            top: 50% !important;
+            right: 15px !important;
+            transform: translateY(-50%) !important;
+            margin: 0 !important;
+        }
+
+        .main-navbar .nav-container {
+            position: relative !important;
+            min-height: 70px !important;
+            padding-right: 65px !important;
+            box-sizing: border-box !important;
+        }
+    }
+
+    </style>
+
+    <script>
+    (function () {
+        const button = document.getElementById("awarenessMenuButton");
+        const menu = document.getElementById("awarenessNavLinks");
+
+        if (!button || !menu || button.dataset.ready) return;
+        button.dataset.ready = "true";
+
+        button.addEventListener("click", function () {
+            const isOpen = menu.classList.toggle("menu-visible");
+            button.setAttribute("aria-expanded", String(isOpen));
+            button.setAttribute(
+                "aria-label",
+                isOpen ? "Close navigation menu" : "Open navigation menu"
+            );
+            button.textContent = isOpen ? "✕" : "☰";
+        });
+
+        menu.querySelectorAll("a").forEach(function (link) {
+            link.addEventListener("click", function () {
+                menu.classList.remove("menu-visible");
+                button.textContent = "☰";
+                button.setAttribute("aria-expanded", "false");
+            });
+        });
+    })();
+    </script>
+
 
 
     <!-- =====================================================
@@ -1339,7 +1421,8 @@
     </footer>
 
 
-    <script src="JS/awareness.js"></script>
+<script src="JS/awareness.js"></script>
+<script src="JS/app.js"></script>
 
 </body>
 
