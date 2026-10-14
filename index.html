@@ -710,7 +710,9 @@ document.addEventListener("DOMContentLoaded", async function () {
         const picture =
             metadata.avatar_url ||
             metadata.picture ||
-            metadata.profile_picture;
+            metadata.profile_picture ||
+            metadata.photo_url ||
+            metadata.image_url;
 
         profileName.textContent = displayName;
         dropdownName.textContent = displayName;
