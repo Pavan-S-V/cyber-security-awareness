@@ -1,9 +1,11 @@
+
 {
   "name": "cyber-security-awareness-platform",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "description": "CyberSafe cybersecurity awareness platform",
+  "main": "server.js",
   "scripts": {
+    "start": "node server.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
