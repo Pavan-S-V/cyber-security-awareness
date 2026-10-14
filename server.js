@@ -1,3 +1,4 @@
+
 const express = require("express");
 const multer = require("multer");
 const cors = require("cors");
@@ -7,244 +8,323 @@ const { GoogleGenAI } = require("@google/genai");
 dotenv.config();
 
 const app = express();
+const PORT = process.env.PORT || 3000;
 
 app.use(cors());
 app.use(express.json());
+
 app.get("/", (req, res) => {
     res.redirect("/login.html");
 });
+
+// Serve the existing CyberSafe frontend.
 app.use(express.static(__dirname));
 
 const upload = multer({
     storage: multer.memoryStorage(),
     limits: {
         fileSize: 10 * 1024 * 1024
+    },
+    fileFilter: (req, file, callback) => {
+        const allowedTypes = [
+            "image/jpeg",
+            "image/png",
+            "image/webp",
+            "image/gif"
+        ];
+
+        if (!allowedTypes.includes(file.mimetype)) {
+            return callback(
+                new Error(
+                    "Unsupported image type. Please upload a JPG, PNG, WEBP, or GIF image."
+                )
+            );
+        }
+
+        callback(null, true);
     }
 });
 
-const ai = new GoogleGenAI({
-    apiKey: process.env.GEMINI_API_KEY
-});
+const apiKey = process.env.GEMINI_API_KEY;
+
+const ai = apiKey
+    ? new GoogleGenAI({ apiKey })
+    : null;
+
+// Retry only temporary API errors. Never retry indefinitely.
+function isTemporaryError(error) {
+    const status = Number(
+        error.status ||
+        error.statusCode ||
+        error.code
+    );
+
+    return [408, 429, 500, 502, 503, 504].includes(status);
+}
+
+function sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+}
 
 
-/* ================= IMAGE ANALYSIS ================= */
+async function generateWithRetry(request) {
+    const models = [
+        "gemini-3.7-flash",
+        "gemini-3.5-flash",
+        "gemini-3.5-flash-lite"
+    ];
 
-app.post("/api/analyze-image", upload.single("image"), async (req, res) => {
+    let lastError;
 
-    try {
+    for (const model of models) {
+        for (let attempt = 1; attempt <= 2; attempt++) {
+            try {
+                console.log(
+                    `Trying ${model}, attempt ${attempt}/2`
+                );
 
-        if (!req.file) {
-            return res.status(400).json({
-                error: "No image was uploaded."
-            });
+                return await ai.models.generateContent({
+                    ...request,
+                    model
+                });
+
+            } catch (error) {
+                lastError = error;
+
+                const status = Number(
+                    error.status ||
+                    error.statusCode ||
+                    error.code
+                );
+
+                console.error(
+                    `${model} failed:`,
+                    error.message || error
+                );
+
+                // Try another model if this model is unavailable.
+                if (status === 404) {
+                    break;
+                }
+
+                // Retry temporary service errors once.
+                if ([408, 429, 500, 502, 503, 504].includes(status)) {
+                    if (attempt < 2) {
+                        await sleep(2000);
+                        continue;
+                    }
+
+                    break;
+                }
+
+                // Do not retry invalid requests or authentication errors.
+                throw error;
+            }
         }
+    }
 
-        console.log("Image received:", req.file.mimetype);
-        console.log("Image size:", req.file.size);
+    throw lastError || new Error(
+        "All configured Gemini models failed."
+    );
+}
 
 
-        const imageBase64 =
-            req.file.buffer.toString("base64");
+// IMAGE ANALYSIS
+app.post(
+    "/api/analyze-image",
+    (req, res, next) => {
+        upload.single("image")(req, res, error => {
+            if (error) {
+                return res.status(400).json({
+                    error: error.message || "Could not upload the image."
+                });
+            }
 
+            next();
+        });
+    },
+    async (req, res) => {
+        try {
+            if (!ai) {
+                return res.status(500).json({
+                    error: "Gemini API key is not configured on the server."
+                });
+            }
 
-        const prompt = `
-You are the image text extraction engine for a cybersecurity awareness platform.
+            if (!req.file) {
+                return res.status(400).json({
+                    error: "No image was uploaded."
+                });
+            }
 
-Carefully inspect the uploaded image and identify the MAIN SUSPICIOUS MESSAGE, SMS, email, chat message, notification, or scam content shown in the image.
+            console.log("Image received:", req.file.mimetype);
+            console.log("Image size:", req.file.size);
 
-IMPORTANT:
-Extract the suspicious/user-facing message content only.
+            const imageBase64 = req.file.buffer.toString("base64");
 
-IGNORE:
-- Website navigation menus
-- Browser UI
-- Buttons
-- Headings
-- Instructions such as "Click", "Test it", "Then", "Step 1", etc.
-- Developer instructions
-- Tutorial instructions
-- Application interface text
-- Text explaining how to use the analyzer
-- Captions or labels surrounding the suspicious message
-- Other unrelated text that is not part of the suspected message
+            const prompt = `
+You are the image text extraction engine for a cybersecurity
+awareness platform.
 
-For example, if the image contains:
+Inspect the uploaded image and extract the main user-facing message
+that might need a cybersecurity risk check. It may be an SMS, email,
+chat message, notification, banking alert, or website message.
 
-"Click Screenshot
-Upload a screenshot containing something like:
-URGENT! Your bank account will be blocked.
-Verify your KYC immediately."
-
-The extracted text should contain ONLY the suspected message:
-
-"URGENT! Your bank account will be blocked.
-Verify your KYC immediately."
-
-Do NOT include the surrounding instructions.
+Extract only the relevant message. Ignore browser controls,
+application navigation, tutorial instructions, captions, and
+unrelated interface text.
 
 Rules:
 1. Do not invent text.
-2. Do not rewrite or improve the suspicious message.
-3. Preserve the original wording as accurately as possible.
-4. Extract the complete suspicious message when it is clearly identifiable.
-5. Detect URLs that belong to the suspicious message.
-6. Ignore unrelated surrounding text.
-7. If there is no identifiable suspicious/message content, return an empty string.
-8. Do not decide whether the message is a scam. Only extract the content.
+2. Preserve the original wording.
+3. Extract the complete identifiable message when possible.
+4. Include URLs that belong to that message.
+5. If no identifiable message exists, return an empty extractedText.
+6. Do not decide whether the message is a scam. Another component
+   performs risk analysis.
+7. Ordinary messages and unrelated photographs must not be
+   classified as scams just because they were uploaded.
 
-Return JSON with:
-- extractedText
-- urls
-- confidence
-
-confidence must be a number from 0 to 1.
+Return only the requested JSON structure.
 `;
 
-
-        const response = await ai.models.generateContent({
-
-            model: "gemini-3.6-flash",
-
-        contents: [
-            {
-                text: prompt
-            },
-            {
-                inlineData: {
-                    mimeType: req.file.mimetype,
-                    data: imageBase64
-                }
-            }
-        ],
-
-            config: {
-
-                responseMimeType: "application/json",
-
-                responseSchema: {
-                    type: "object",
-
-                    properties: {
-
-                        extractedText: {
-                            type: "string"
-                        },
-
-                        urls: {
-                            type: "array",
-                            items: {
+            const request = {
+                contents: [
+                    {
+                        text: prompt
+                    },
+                    {
+                        inlineData: {
+                            mimeType: req.file.mimetype,
+                            data: imageBase64
+                        }
+                    }
+                ],
+                config: {
+                    responseMimeType: "application/json",
+                    responseSchema: {
+                        type: "object",
+                        properties: {
+                            extractedText: {
                                 type: "string"
+                            },
+                            urls: {
+                                type: "array",
+                                items: {
+                                    type: "string"
+                                }
+                            },
+                            confidence: {
+                                type: "number"
                             }
                         },
-
-                        confidence: {
-                            type: "number"
-                        }
-
-                    },
-
-                    required: [
-                        "extractedText",
-                        "urls",
-                        "confidence"
-                    ]
+                        required: [
+                            "extractedText",
+                            "urls",
+                            "confidence"
+                        ]
+                    }
                 }
+            };
 
+            const response = await generateWithRetry(request);
+
+            const responseText = response.text;
+
+            if (!responseText) {
+                throw new Error(
+                    "Gemini returned an empty response. Please try another image."
+                );
             }
 
-        });
+            let result;
 
+            try {
+                result = JSON.parse(responseText);
+            } catch {
+                throw new Error(
+                    "Gemini returned an invalid response. Please try again."
+                );
+            }
 
-        console.log("Gemini response received.");
+            const extractedText =
+                typeof result.extractedText === "string"
+                    ? result.extractedText.trim()
+                    : "";
 
+            const urls = Array.isArray(result.urls)
+                ? result.urls.filter(url => typeof url === "string")
+                : [];
 
-        const responseText = response.text;
+            const confidence = Number(result.confidence);
 
-        console.log("Gemini output:", responseText);
+            console.log("Image extraction completed.");
 
-
-        let result;
-
-        try {
-
-            result = JSON.parse(responseText);
-
-        } catch (parseError) {
-
-            console.error(
-                "JSON parsing failed:",
-                parseError
-            );
-
-            return res.status(500).json({
-                error: "Gemini returned an invalid response.",
-                raw: responseText
+            return res.json({
+                success: true,
+                extractedText,
+                urls,
+                confidence: Number.isFinite(confidence)
+                    ? Math.max(0, Math.min(1, confidence))
+                    : 0
             });
 
+        } catch (error) {
+            console.error("GEMINI IMAGE ERROR:", error.message || error);
+
+            const status = Number(
+                error.status ||
+                error.statusCode ||
+                error.code
+            );
+
+            if ([429, 500, 502, 503, 504, 408].includes(status)) {
+                return res.status(503).json({
+                    success: false,
+                    error:
+                        "The image analysis service is temporarily busy. Please try again in a few seconds."
+                });
+            }
+
+            if (status === 401 || status === 403) {
+                return res.status(502).json({
+                    success: false,
+                    error:
+                        "Gemini authentication failed. Check the server API key and its permissions."
+                });
+            }
+
+            return res.status(500).json({
+                success: false,
+                error:
+                    error.message ||
+                    "Image analysis failed. Please try another image."
+            });
         }
-
-
-        res.json({
-
-            extractedText:
-                result.extractedText || "",
-
-            urls:
-                Array.isArray(result.urls)
-                    ? result.urls
-                    : [],
-
-            confidence:
-                Number(result.confidence) || 0
-
-        });
-
     }
+);
 
-
-    catch (error) {
-
-        console.error(
-            "================================"
-        );
-
-        console.error(
-            "GEMINI IMAGE ERROR:"
-        );
-
-        console.error(error);
-
-        console.error(
-            "================================"
-        );
-
-
-        res.status(500).json({
-
-            error:
-                error.message ||
-                "Gemini image analysis failed."
-
-        });
-
-    }
-
-});
-
-
-/* ================= HEALTH CHECK ================= */
-
+// HEALTH CHECK
 app.get("/api/health", (req, res) => {
-
     res.json({
         status: "CyberSafe server is running"
     });
-
 });
 
+// General error handler
+app.use((error, req, res, next) => {
+    console.error("Server error:", error.message || error);
 
-/* ================= START SERVER ================= */
+    if (res.headersSent) {
+        return next(error);
+    }
 
-app.listen(3000, "0.0.0.0", () => {
-    console.log("CyberSafe running on port 3000");
+    res.status(500).json({
+        success: false,
+        error: "An unexpected server error occurred."
+    });
+});
+
+app.listen(PORT, "0.0.0.0", () => {
+    console.log(`CyberSafe running on port ${PORT}`);
 });
