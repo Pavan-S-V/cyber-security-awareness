@@ -1,0 +1,29 @@
+{
+  "background_color": "#f5f8ff",
+  "description": "CyberSafe helps users recognise suspicious messages, deceptive URLs, phishing, and common online scams.",
+  "dir": "ltr",
+  "display": "standalone",
+  "name": "CyberSafe — Cybersecurity Awareness",
+  "orientation": "any",
+  "scope": "/",
+  "short_name": "CyberSafe",
+  "start_url": "/",
+  "theme_color": "#2563ff",
+  "icons": [{
+      "src": "https://cyber--safe.vercel.app/assets/images/icons/cybersafe-logo.png",
+      "isSquare": false,
+      "isPng": true,
+      "isWebp": false,
+      "isJpg": false,
+      "width": 0,
+      "is512x512": false,
+      "is256x256": false,
+      "is192x192": false
+    }
+  ],
+  "id": "/cybersafe",
+  "lang": "en",
+  "categories": [
+    "security"
+  ]
+}
