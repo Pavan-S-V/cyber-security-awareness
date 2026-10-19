@@ -268,7 +268,18 @@
                 }
 
                 if (data.session) {
-                    window.location.replace("/index.html");
+                    const next = new URLSearchParams(window.location.search).get("next");
+
+                    if (next === "/analyzer.html") {
+                        const pendingURL = sessionStorage.getItem("cybersafe_pending_url");
+                        const destination = new URL("/analyzer.html", window.location.origin);
+
+                        if (pendingURL) destination.searchParams.set("sharedUrl", pendingURL);
+
+                        window.location.replace(destination.toString());
+                    } else {
+                        window.location.replace("/index.html");
+                    }
                 }
             } catch (error) {
                 console.error("Redirect error:", error);
@@ -278,7 +289,19 @@
         supabaseClient.auth.onAuthStateChange((event, session) => {
             if (session && (event === "SIGNED_IN" ||
                             event === "INITIAL_SESSION")) {
-                window.location.replace("/index.html");
+
+                const next = new URLSearchParams(window.location.search).get("next");
+                
+                if (next === "/analyzer.html") {
+                    const pendingURL = sessionStorage.getItem("cybersafe_pending_url");
+                    const destination = new URL("/analyzer.html", window.location.origin);
+
+                    if (pendingURL) destination.searchParams.set("sharedUrl", pendingURL);
+
+                    window.location.replace(destination.toString());
+                } else {
+                    window.location.replace("/index.html");
+                }
             }
         });
 

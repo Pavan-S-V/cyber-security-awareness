@@ -7,6 +7,23 @@ document.addEventListener("DOMContentLoaded", () => {
         return;
     }
 
+    function redirectAfterLogin() {
+        const next = new URLSearchParams(window.location.search).get("next");
+
+        if (next === "/analyzer.html") {
+            const pendingURL = sessionStorage.getItem("cybersafe_pending_url");
+            const destination = new URL("/analyzer.html", window.location.origin);
+
+            if (pendingURL) {
+                destination.searchParams.set("sharedUrl", pendingURL);
+            }
+
+            window.location.replace(destination.toString());
+        } else {
+            redirectAfterLogin();
+        }
+    }
+
     const $ = (id) => document.getElementById(id);
 
     const form = $("authForm");
@@ -147,7 +164,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
         if (data.session) {
-            window.location.replace("/index.html");
+            redirectAfterLogin();
         }
     }
 
@@ -213,7 +230,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
                 if (data.session) {
                     showMessage("Account created successfully!", "success");
-                    window.location.replace("/index.html");
+                    redirectAfterLogin();
                     return;
                 }
 
@@ -228,7 +245,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
             if (error) throw error;
 
-            window.location.replace("/index.html");
+            redirectAfterLogin();
         } catch (error) {
             console.error("Authentication error:", error);
             showMessage(friendlyError(error), "error");
@@ -266,7 +283,7 @@ document.addEventListener("DOMContentLoaded", () => {
             const { data } = await client.auth.getSession();
 
             if (data.session) {
-                window.location.replace("/index.html");
+                redirectAfterLogin();
             } else {
                 mode = "login";
                 showAuthScreen();

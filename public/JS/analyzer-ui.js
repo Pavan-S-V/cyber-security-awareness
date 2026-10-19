@@ -36,6 +36,65 @@ const ocrConfidence =
     
 let currentType = "message";
 
+// CyberSafe: handle a URL shared from another app
+
+async function handleSharedURL() {
+    const params = new URLSearchParams(window.location.search);
+
+    const sharedURL =
+        params.get("sharedUrl") ||
+        params.get("url");
+
+    const pendingURL =
+        sharedURL ||
+        sessionStorage.getItem("cybersafe_pending_url");
+
+    if (!pendingURL) return;
+
+    // Preserve the URL until authentication and analysis finish
+    sessionStorage.setItem("cybersafe_pending_url", pendingURL);
+
+    // Select the URL tab and fill in the shared link
+    const urlTab = document.querySelector('.tab[data-type="url"]');
+
+    if (urlTab) urlTab.click();
+
+    urlInput.value = pendingURL;
+
+    try {
+        const client = window.supabaseClient;
+
+        if (!client) {
+            alert("Please log in to CyberSafe to analyze this link.");
+            window.location.href =
+                "/login.html?next=" +
+                encodeURIComponent("/analyzer.html");
+            return;
+        }
+
+        const { data, error } = await client.auth.getUser();
+
+        if (error || !data.user) {
+            window.location.href =
+                "/login.html?next=" +
+                encodeURIComponent("/analyzer.html");
+            return;
+        }
+
+        // Start the existing analyzer
+        analyzeButton.click();
+
+        // Clear the saved URL after starting analysis
+        sessionStorage.removeItem("cybersafe_pending_url");
+
+    } catch (error) {
+        console.error("Shared URL handling failed:", error);
+        alert("Unable to verify your login. Please try again.");
+    }
+}
+
+window.addEventListener("DOMContentLoaded", handleSharedURL);
+
 
 /* ================= TABS ================= */
 

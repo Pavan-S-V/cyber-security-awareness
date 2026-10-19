@@ -105,7 +105,7 @@ async function loginWithGoogle() {
     const { data, error } = await client.auth.signInWithOAuth({
         provider: "google",
         options: {
-            redirectTo: window.location.origin + "/login.html"
+            redirectTo: window.location.origin + "/login.html" + window.location.search
         }
     });
 
