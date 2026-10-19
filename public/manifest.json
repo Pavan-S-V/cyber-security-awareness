@@ -9,16 +9,18 @@
   "short_name": "CyberSafe",
   "start_url": "/",
   "theme_color": "#2563ff",
-  "icons": [{
-      "src": "https://cyber--safe.vercel.app/assets/images/icons/cybersafe-logo.png",
-      "isSquare": false,
-      "isPng": true,
-      "isWebp": false,
-      "isJpg": false,
-      "width": 0,
-      "is512x512": false,
-      "is256x256": false,
-      "is192x192": false
+  "icons": [
+    {
+      "src": "/assets/images/icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/assets/images/icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
     }
   ],
   "id": "/cybersafe",
