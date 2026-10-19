@@ -1,0 +1,36 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Opening CyberSafe...</title>
+</head>
+<body>
+  <p>Opening CyberSafe Security Analyzer...</p>
+
+  <script>
+    const params = new URLSearchParams(window.location.search);
+
+    const sharedUrl = params.get("url") || "";
+    const sharedText = params.get("text") || "";
+    const sharedTitle = params.get("title") || "";
+
+    const target = new URL("/analyzer.html", window.location.origin);
+
+    if (sharedUrl) {
+      target.searchParams.set("sharedUrl", sharedUrl);
+    }
+
+    if (sharedText) {
+      target.searchParams.set("sharedText", sharedText);
+    }
+
+    if (sharedTitle) {
+      target.searchParams.set("sharedTitle", sharedTitle);
+    }
+
+    window.location.replace(target.toString());
+  </script>
+</body>
+</html>

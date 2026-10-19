@@ -1,14 +1,18 @@
+
 {
   "background_color": "#f5f8ff",
   "description": "CyberSafe helps users recognise suspicious messages, deceptive URLs, phishing, and common online scams.",
   "dir": "ltr",
   "display": "standalone",
   "name": "CyberSafe — Cybersecurity Awareness",
-  "orientation": "any",
-  "scope": "/",
   "short_name": "CyberSafe",
+  "lang": "en",
+  "scope": "/",
   "start_url": "/",
+  "id": "/cybersafe",
+  "orientation": "any",
   "theme_color": "#2563ff",
+  "categories": ["security"],
   "icons": [
     {
       "src": "/assets/images/icons/icon-192.png",
@@ -23,9 +27,14 @@
       "purpose": "any"
     }
   ],
-  "id": "/cybersafe",
-  "lang": "en",
-  "categories": [
-    "security"
-  ]
+  "share_target": {
+    "action": "/share-target.html",
+    "method": "GET",
+    "enctype": "application/x-www-form-urlencoded",
+    "params": {
+      "title": "title",
+      "text": "text",
+      "url": "url"
+    }
+  }
 }
