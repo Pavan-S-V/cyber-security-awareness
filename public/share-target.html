@@ -3,22 +3,24 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="theme-color" content="#07142b">
-  <title>Secure Link Check | CyberSafe</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f7f9ff">
+  <title>CyberSafe | Secure Link Check</title>
 
   <style>
     :root {
-      color-scheme: dark;
-      --bg: #07142b;
-      --panel: rgba(18, 36, 69, 0.88);
-      --cyan: #38e5d0;
-      --blue: #5485ff;
-      --text: #f4f7ff;
-      --muted: #9fb1d0;
+      --ink: #172b4d;
+      --muted: #71809a;
+      --blue: #356dff;
+      --teal: #17bda9;
+      --line: #e7ecf5;
+      --surface: #ffffff;
+      --background: #f7f9ff;
     }
 
-    * { box-sizing: border-box; }
+    * {
+      box-sizing: border-box;
+    }
 
     body {
       margin: 0;
@@ -26,117 +28,125 @@
       display: grid;
       place-items: center;
       padding: 24px;
-      overflow: hidden;
-      font-family: Inter, system-ui, -apple-system, sans-serif;
-      color: var(--text);
+      font-family: Inter, "Segoe UI", Arial, sans-serif;
+      color: var(--ink);
       background:
-        radial-gradient(ellipse at 15% 10%, #163d72 0, transparent 38%),
-        radial-gradient(ellipse at 90% 85%, #22215f 0, transparent 35%),
-        var(--bg);
+        radial-gradient(ellipse at 50% 0%, #edf3ff 0%, transparent 55%),
+        var(--background);
     }
 
-    .glow {
-      position: fixed;
-      width: 330px;
-      height: 330px;
-      border-radius: 50%;
-      background: #2679ff;
-      filter: blur(120px);
-      opacity: .18;
-      pointer-events: none;
-    }
-
-    .card {
-      position: relative;
-      width: min(100%, 440px);
-      padding: 38px 28px 30px;
+    .page {
+      width: min(100%, 430px);
       text-align: center;
-      border: 1px solid rgba(135, 174, 255, .22);
-      border-radius: 28px;
-      background: var(--panel);
-      box-shadow: 0 28px 90px rgba(0, 0, 0, .35);
-      backdrop-filter: blur(22px);
-      animation: appear .65s ease both;
+      animation: enter .65s ease-out both;
     }
 
     .brand {
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 11px;
-      margin-bottom: 34px;
-      font-size: 21px;
-      font-weight: 800;
-      letter-spacing: -.7px;
+      gap: 12px;
+      margin-bottom: 30px;
     }
 
-    .brand-mark {
-      display: grid;
-      place-items: center;
-      width: 43px;
-      height: 43px;
-      border: 1px solid rgba(56, 229, 208, .5);
-      border-radius: 14px;
-      color: var(--cyan);
-      background: linear-gradient(145deg, #163d64, #101d3a);
-      box-shadow: 0 0 25px rgba(56, 229, 208, .12);
+    .brand img {
+      width: 47px;
+      height: 47px;
+      object-fit: contain;
+      border-radius: 13px;
+    }
+
+    .brand-name {
+      text-align: left;
       font-size: 23px;
+      font-weight: 800;
+      letter-spacing: -0.8px;
     }
 
-    .scanner {
+    .brand-tagline {
+      margin-top: 3px;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .card {
+      padding: 35px 28px 27px;
+      border: 1px solid rgba(216, 225, 241, .9);
+      border-radius: 25px;
+      background: var(--surface);
+      box-shadow:
+        0 18px 55px rgba(35, 62, 110, .07),
+        0 2px 8px rgba(35, 62, 110, .025);
+    }
+
+    .logo-stage {
       position: relative;
-      width: 118px;
-      height: 118px;
-      margin: 0 auto 27px;
       display: grid;
       place-items: center;
-      border: 1px solid rgba(84, 133, 255, .35);
+      width: 122px;
+      height: 122px;
+      margin: 0 auto 25px;
       border-radius: 50%;
-      background: radial-gradient(circle, rgba(56,229,208,.1), transparent 70%);
+      background: linear-gradient(145deg, #f4f8ff, #ffffff);
+      border: 1px solid #e8eefb;
     }
 
-    .scanner::before,
-    .scanner::after {
+    .logo-stage::before {
       content: "";
       position: absolute;
-      inset: -8px;
+      inset: -5px;
       border: 2px solid transparent;
-      border-top-color: var(--cyan);
-      border-right-color: var(--blue);
-      border-radius: 50%;
-      animation: spin 2.5s linear infinite;
-    }
-
-    .scanner::after {
-      inset: 7px;
       border-top-color: var(--blue);
-      border-right-color: transparent;
-      animation-direction: reverse;
-      animation-duration: 1.8s;
+      border-right-color: #a9c3ff;
+      border-radius: 50%;
+      animation: rotate 3s linear infinite;
     }
 
-    .shield {
-      font-size: 47px;
-      filter: drop-shadow(0 0 15px rgba(56, 229, 208, .32));
+    .logo-stage img {
+      width: 92px;
+      height: 92px;
+      display: block;
+      object-fit: contain;
+      border-radius: 50%;
+      animation: breathe 2.8s ease-in-out infinite;
     }
 
     .eyebrow {
-      color: var(--cyan);
-      font-size: 11px;
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      padding: 8px 12px;
+      border-radius: 30px;
+      border: 1px solid #e2ebff;
+      background: #f5f8ff;
+      color: var(--blue);
+      font-size: 10px;
       font-weight: 800;
-      letter-spacing: 2px;
-      text-transform: uppercase;
+      letter-spacing: 1.1px;
+    }
+
+    .eyebrow-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--teal);
+      box-shadow: 0 0 0 4px #e1faf5;
     }
 
     h1 {
-      margin: 11px 0;
-      font-size: clamp(25px, 6vw, 32px);
-      letter-spacing: -1.1px;
+      margin: 20px 0 11px;
+      font-size: clamp(26px, 6vw, 32px);
+      line-height: 1.18;
+      letter-spacing: -1.15px;
+    }
+
+    h1 span {
+      color: var(--blue);
     }
 
     .description {
+      max-width: 310px;
       margin: 0 auto;
-      max-width: 320px;
       color: var(--muted);
       font-size: 14px;
       line-height: 1.8;
@@ -146,164 +156,196 @@
       display: flex;
       align-items: center;
       gap: 12px;
-      margin-top: 29px;
+      margin-top: 27px;
       padding: 15px;
-      text-align: left;
-      border: 1px solid rgba(135,174,255,.17);
+      border: 1px solid var(--line);
       border-radius: 15px;
-      background: rgba(4, 14, 33, .48);
+      background: #fbfcff;
+      text-align: left;
     }
 
-    .status-dot {
-      flex: 0 0 10px;
-      width: 10px;
-      height: 10px;
-      border-radius: 50%;
-      background: var(--cyan);
-      box-shadow: 0 0 13px var(--cyan);
-      animation: pulse 1.4s infinite;
+    .status-icon {
+      flex: 0 0 38px;
+      width: 38px;
+      height: 38px;
+      display: grid;
+      place-items: center;
+      border-radius: 12px;
+      background: #eafaf6;
+      color: #0d9e8c;
+      font-size: 19px;
     }
 
-    .status strong {
-      display: block;
+    .status-title {
       font-size: 13px;
+      font-weight: 750;
     }
 
-    .status small {
-      display: block;
-      margin-top: 4px;
+    .status-detail {
+      margin-top: 5px;
       color: var(--muted);
       font-size: 11px;
+      line-height: 1.5;
     }
 
-    .track {
+    .progress-track {
       height: 4px;
-      margin-top: 24px;
+      margin-top: 22px;
       overflow: hidden;
-      border-radius: 10px;
-      background: #203353;
+      border-radius: 8px;
+      background: #edf1f8;
     }
 
-    .progress {
-      width: 40%;
+    .progress-bar {
+      width: 35%;
       height: 100%;
       border-radius: inherit;
-      background: linear-gradient(90deg, var(--blue), var(--cyan));
-      animation: progress 1.2s ease-in-out infinite alternate;
+      background: linear-gradient(90deg, var(--blue), #6d9bff, var(--teal));
+      animation: progress 1.5s ease-in-out infinite alternate;
     }
 
     .footer {
-      margin-top: 24px;
-      color: #8194b6;
-      font-size: 11px;
+      margin-top: 22px;
+      color: #91a0b8;
+      font-size: 10px;
+      letter-spacing: .7px;
     }
 
-    .fallback {
+    .manual-link {
       display: none;
       margin-top: 20px;
-      color: var(--cyan);
+      color: var(--blue);
+      font-size: 13px;
       font-weight: 700;
+      text-decoration: none;
     }
 
-    .fallback a { color: inherit; }
-
-    @keyframes spin { to { transform: rotate(360deg); } }
-    @keyframes pulse {
-      50% { opacity: .45; transform: scale(.8); }
-    }
-    @keyframes progress {
-      from { transform: translateX(-20%); }
-      to { transform: translateX(150%); }
-    }
-    @keyframes appear {
+    @keyframes enter {
       from { opacity: 0; transform: translateY(12px); }
       to { opacity: 1; transform: translateY(0); }
     }
 
+    @keyframes rotate {
+      to { transform: rotate(360deg); }
+    }
+
+    @keyframes breathe {
+      50% { transform: scale(1.035); }
+    }
+
+    @keyframes progress {
+      from { transform: translateX(-15%); }
+      to { transform: translateX(190%); }
+    }
+
     @media (prefers-reduced-motion: reduce) {
       *, *::before, *::after {
-        animation-duration: .01ms !important;
-        animation-iteration-count: 1 !important;
+        animation: none !important;
       }
     }
   </style>
 </head>
 
 <body>
-  <div class="glow"></div>
-
-  <main class="card">
-    <div class="brand">
-      <div class="brand-mark">⬡</div>
-      <span>CyberSafe</span>
-    </div>
-
-    <div class="scanner">
-      <div class="shield">🛡️</div>
-    </div>
-
-    <div class="eyebrow">Your digital safety comes first</div>
-    <h1>Think Before You Click.</h1>
-
-    <p class="description">
-      Preparing your shared link for a security assessment.
-      Stay here while we open the CyberSafe analyzer.
-    </p>
-
-    <div class="status">
-      <span class="status-dot"></span>
+  <main class="page">
+    <header class="brand">
+      <img
+        src="/assets/images/icons/cybersafe-logo.png"
+        alt="CyberSafe logo"
+      >
       <div>
-        <strong id="statusTitle">Opening secure analyzer</strong>
-        <small id="statusText">Preparing your submitted content…</small>
+        <div class="brand-name">CyberSafe</div>
+        <div class="brand-tagline">Stay Alert. Stay Safe.</div>
       </div>
-    </div>
+    </header>
 
-    <div class="track"><div class="progress"></div></div>
+    <section class="card">
+      <div class="logo-stage">
+        <img
+          src="/assets/images/icons/cybersafe-logo.png"
+          alt="CyberSafe security logo"
+        >
+      </div>
 
-    <div id="fallback" class="fallback">
-      <a id="manualLink" href="/analyzer.html">Continue to CyberSafe Analyzer →</a>
-    </div>
+      <div class="eyebrow">
+        <span class="eyebrow-dot"></span>
+        SECURE LINK HANDOFF
+      </div>
 
-    <div class="footer">CYBERSAFE · STAY ALERT. STAY SAFE.</div>
+      <h1>Think Before You <span>Click.</span></h1>
+
+      <p class="description">
+        Your digital safety matters. We're opening your CyberSafe
+        workspace so you can review the shared link before proceeding.
+      </p>
+
+      <div class="status">
+        <div class="status-icon">✓</div>
+        <div>
+          <div class="status-title" id="statusTitle">
+            Preparing your security check
+          </div>
+          <div class="status-detail" id="statusDetail">
+            Safely transferring the shared content to CyberSafe…
+          </div>
+        </div>
+      </div>
+
+      <div class="progress-track">
+        <div class="progress-bar"></div>
+      </div>
+
+      <a id="manualLink" class="manual-link" href="/analyzer.html">
+        Continue to CyberSafe Analyzer →
+      </a>
+    </section>
+
+    <footer class="footer">
+      CYBERSAFE · SECURITY AWARENESS PLATFORM
+    </footer>
   </main>
 
   <script>
     (() => {
-      const params = new URLSearchParams(location.search);
+      const params = new URLSearchParams(window.location.search);
       const sharedUrl = params.get("url") || "";
       const sharedText = params.get("text") || "";
       const sharedTitle = params.get("title") || "";
 
-      // Prefer an explicitly shared URL; otherwise extract one from text.
-      const match = sharedText.match(
-        /https?:\/\/[^\s<>"']+/i
-      );
+      const match = sharedText.match(/https?:\/\/[^\s<>"']+/i);
       const extractedUrl = match
         ? match[0].replace(/[),.!?]+$/, "")
         : "";
 
-      const candidate = sharedUrl || extractedUrl;
-      const target = new URL("/analyzer.html", location.origin);
+      const target = new URL("/analyzer.html", window.location.origin);
+      const urlToCheck = sharedUrl || extractedUrl;
 
-      if (candidate) target.searchParams.set("sharedUrl", candidate);
-      if (sharedText) target.searchParams.set("sharedText", sharedText);
-      if (sharedTitle) target.searchParams.set("sharedTitle", sharedTitle);
+      if (urlToCheck) {
+        target.searchParams.set("sharedUrl", urlToCheck);
+      }
 
-      document.getElementById("manualLink").href = target.href;
+      if (sharedText) {
+        target.searchParams.set("sharedText", sharedText);
+      }
 
-      // Brief branded transition, then open the analyzer.
+      if (sharedTitle) {
+        target.searchParams.set("sharedTitle", sharedTitle);
+      }
+
+      const manualLink = document.getElementById("manualLink");
+      manualLink.href = target.href;
+
       setTimeout(() => {
         document.getElementById("statusTitle").textContent =
-          "Ready to continue";
-        document.getElementById("statusText").textContent =
-          "Opening your CyberSafe security workspace…";
+          "Opening your workspace";
+        document.getElementById("statusDetail").textContent =
+          "Taking you to the CyberSafe Analyzer…";
 
-        location.replace(target.href);
-      }, 1000);
+        window.location.replace(target.href);
+      }, 900);
 
-      // If navigation is blocked, provide a manual link.
       setTimeout(() => {
-        document.getElementById("fallback").style.display = "block";
+        manualLink.style.display = "inline-block";
       }, 2500);
     })();
   </script>
