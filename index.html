@@ -745,7 +745,7 @@ document.addEventListener("DOMContentLoaded", async function () {
     await loadUserProfile();
 
     client.auth.onAuthStateChange(function (event, session) {
-        if (event === "SIGNED_OUT" || !session) {
+        if (event === "SIGNED_OUT") {
             window.location.replace("/login.html");
         }
     });
