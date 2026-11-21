@@ -1,452 +1,471 @@
+
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#ffffff">
+<title>Contact Details | CyberSafe</title>
 
-    <title>About | CyberSafe</title>
+<style>
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
 
-    <link rel="stylesheet" href="CSS/style.css">
-    <link rel="stylesheet" href="CSS/about.css">
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    font-family: Arial, Helvetica, sans-serif;
+    background: #ffffff;
+    color: #172b4d;
+}
+
+/* NAVIGATION */
+.navbar {
+    height: 76px;
+    padding: 0 7%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: rgba(255,255,255,.96);
+    border-bottom: 1px solid #e9edf4;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    backdrop-filter: blur(12px);
+}
+
+.brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    text-decoration: none;
+    color: #172b4d;
+    font-size: 22px;
+    font-weight: 800;
+}
+
+.brand img {
+    width: 42px;
+    height: 42px;
+    object-fit: contain;
+}
+
+.nav-links {
+    display: flex;
+    align-items: center;
+    gap: 30px;
+}
+
+.nav-links a {
+    color: #64748b;
+    font-size: 14px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: color .25s ease;
+}
+
+.nav-links a:hover,
+.nav-links a.active {
+    color: #2864ff;
+}
+
+.menu-btn {
+    display: none;
+    width: 42px;
+    height: 42px;
+    background: #fff;
+    border: 1px solid #e5eaf2;
+    border-radius: 9px;
+    font-size: 22px;
+    cursor: pointer;
+}
+
+/* MAIN */
+main {
+    min-height: calc(100vh - 150px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 75px 20px;
+    background:
+        radial-gradient(ellipse at 50% 10%, #f0f5ff 0%, transparent 55%),
+        #ffffff;
+}
+
+.contact-wrapper {
+    width: 100%;
+    max-width: 650px;
+    text-align: center;
+    animation: fadeUp .8s ease both;
+}
+
+.eyebrow {
+    display: inline-block;
+    padding: 9px 16px;
+    margin-bottom: 23px;
+    border-radius: 30px;
+    background: #edf3ff;
+    color: #2864ff;
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 1.3px;
+}
+
+h1 {
+    color: #172b4d;
+    font-size: clamp(34px, 5vw, 45px);
+    font-weight: 800;
+    letter-spacing: -1.5px;
+    margin-bottom: 17px;
+}
+
+.intro {
+    max-width: 490px;
+    margin: 0 auto;
+    color: #718096;
+    font-size: 15px;
+    line-height: 1.9;
+}
+
+/* EMAIL CARD */
+.email-card {
+    margin: 42px auto 0;
+    max-width: 520px;
+    padding: 32px;
+    text-align: left;
+    background: #ffffff;
+    border: 1px solid #e6ebf3;
+    border-radius: 17px;
+    box-shadow: 0 15px 45px rgba(25, 50, 90, .07);
+    transition: .3s ease;
+}
+
+.email-card:hover {
+    transform: translateY(-5px);
+    border-color: #cbd9ff;
+    box-shadow: 0 22px 50px rgba(25, 50, 90, .10);
+}
+
+.email-heading {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 25px;
+}
+
+.email-icon {
+    width: 51px;
+    height: 51px;
+    display: grid;
+    place-items: center;
+    flex-shrink: 0;
+    border-radius: 13px;
+    background: #edf3ff;
+    color: #2864ff;
+}
+
+.email-icon svg {
+    width: 25px;
+    height: 25px;
+}
+
+.email-heading h2 {
+    font-size: 17px;
+    margin-bottom: 5px;
+}
+
+.email-heading p {
+    color: #94a3b8;
+    font-size: 12px;
+}
+
+.email-label {
+    color: #8491a5;
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 1px;
+    margin-bottom: 10px;
+}
+
+.email-address {
+    color: #2864ff;
+    font-size: 16px;
+    font-weight: 700;
+    text-decoration: none;
+    overflow-wrap: anywhere;
+}
+
+.email-address:hover {
+    text-decoration: underline;
+}
+
+.card-divider {
+    height: 1px;
+    background: #edf0f5;
+    margin: 24px 0;
+}
+
+.send-button {
+    width: 100%;
+    min-height: 49px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    border-radius: 9px;
+    background: #2864ff;
+    color: #ffffff;
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 700;
+    transition: .25s ease;
+}
+
+.send-button:hover {
+    background: #174fe0;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(40,100,255,.2);
+}
+
+.send-button svg {
+    width: 17px;
+    height: 17px;
+}
+
+.note {
+    margin-top: 19px;
+    color: #94a3b8;
+    font-size: 12px;
+    line-height: 1.7;
+}
+
+/* FOOTER */
+.footer {
+    min-height: 74px;
+    padding: 20px 7%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 15px;
+    border-top: 1px solid #e9edf4;
+    background: #ffffff;
+}
+
+.footer strong {
+    font-size: 15px;
+}
+
+.footer p,
+.footer span {
+    color: #94a3b8;
+    font-size: 12px;
+}
+
+/* ANIMATION */
+@keyframes fadeUp {
+    from {
+        opacity: 0;
+        transform: translateY(25px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* MOBILE */
+@media(max-width: 850px) {
+    .navbar {
+        padding: 0 20px;
+    }
+
+    .menu-btn {
+        display: block;
+    }
+
+    .nav-links {
+        display: none;
+        position: absolute;
+        top: 76px;
+        left: 15px;
+        right: 15px;
+        padding: 12px;
+        flex-direction: column;
+        align-items: stretch;
+        gap: 0;
+        background: #fff;
+        border: 1px solid #e8edf5;
+        border-radius: 12px;
+        box-shadow: 0 12px 30px rgba(20,40,80,.1);
+    }
+
+    .nav-links.show {
+        display: flex;
+    }
+
+    .nav-links a {
+        padding: 13px;
+    }
+}
+
+@media(max-width: 600px) {
+    main {
+        padding: 60px 20px;
+    }
+
+    .email-card {
+        padding: 24px 20px;
+    }
+
+    .email-address {
+        font-size: 14px;
+    }
+
+    .footer {
+        flex-direction: column;
+        text-align: center;
+    }
+}
+</style>
 </head>
 
 <body>
 
-    <!-- NAVBAR -->
-    <nav class="main-navbar" style="position:relative;">
-        <div class="logo">
-            <span class="logo-icon">🛡️</span>
-            <span>CyberSafe</span>
-        </div>
+<!-- NAVIGATION -->
+<header class="navbar">
 
-        <button
-            type="button"
-            id="aboutMenuButton"
-            aria-label="Open navigation menu"
-            aria-expanded="false"
-            style="display:block!important;width:44px;height:44px;flex-shrink:0;font-size:26px;color:#14213d;background:white;border:1px solid #ddd;border-radius:8px;cursor:pointer;position:relative;z-index:10001;">
-            ☰
-        </button>
+    <a href="index.html" class="brand">
+        <img src="assets/images/icons/cybersafe-logo.png"
+             alt="CyberSafe Logo">
+        <span>CyberSafe</span>
+    </a>
 
-        <div class="nav-links" id="aboutNavLinks">
-            <a href="index.html">Home</a>
-            <a href="analyzer.html">Analyzer</a>
-            <a href="awareness.html">Awareness</a>
-            <a href="safety-tips.html">Safety Tips</a>
-            <a href="about.html" class="active">About</a>
-        </div>
+    <button class="menu-btn" id="menuBtn"
+            aria-label="Toggle navigation"
+            aria-expanded="false">
+        ☰
+    </button>
+
+    <nav class="nav-links" id="navLinks">
+        <a href="index.html">Home</a>
+        <a href="analyzer.html">Analyzer</a>
+        <a href="awareness.html">Awareness</a>
+        <a href="safety-tips.html">Safety Tips</a>
+        <a href="about.html" class="active">About</a>
     </nav>
 
-    <style>
-    @media (max-width: 768px) {
-        .main-navbar {
-            display: flex !important;
-            align-items: center !important;
-            justify-content: space-between !important;
-            flex-wrap: wrap !important;
-            padding: 12px 16px !important;
-            gap: 10px !important;
-        }
+</header>
 
-        #aboutNavLinks {
-            display: none !important;
-            position: absolute !important;
-            top: 100% !important;
-            left: 10px !important;
-            right: 10px !important;
-            width: auto !important;
-            flex-direction: column !important;
-            align-items: stretch !important;
-            gap: 12px !important;
-            padding: 18px !important;
-            background: #fff !important;
-            border-radius: 12px !important;
-            box-shadow: 0 8px 25px rgba(0,0,0,.15) !important;
-            z-index: 10000 !important;
-        }
+<!-- CONTACT DETAILS ONLY -->
+<main>
 
-        #aboutNavLinks.menu-visible {
-            display: flex !important;
-        }
+    <section class="contact-wrapper">
 
-        #aboutNavLinks a {
-            display: block !important;
-            padding: 10px !important;
-            color: #14213d !important;
-        }
-    }
+        <span class="eyebrow">CYBERSAFE SUPPORT</span>
 
-    @media (min-width: 769px) {
-        #aboutMenuButton {
-            display: none !important;
-        }
-    }
+        <h1>Contact Details</h1>
 
-    @media (max-width: 768px) {
-        .main-navbar {
-            position: relative !important;
-            display: flex !important;
-            align-items: center !important;
-            justify-content: space-between !important;
-            flex-wrap: nowrap !important;
-            min-height: 70px !important;
-            padding: 12px 16px !important;
-            box-sizing: border-box !important;
-        }
-
-        #aboutMenuButton {
-            position: absolute !important;
-            top: 50% !important;
-            right: 15px !important;
-            transform: translateY(-50%) !important;
-            margin: 0 !important;
-        }
-
-        .main-navbar .logo {
-            margin-right: 55px !important;
-        }
-    }
-
-    </style>
-
-    <script>
-    (function () {
-        const button = document.getElementById("aboutMenuButton");
-        const menu = document.getElementById("aboutNavLinks");
-
-        if (!button || !menu) return;
-
-        button.addEventListener("click", function () {
-            const isOpen = menu.classList.toggle("menu-visible");
-            button.textContent = isOpen ? "✕" : "☰";
-            button.setAttribute("aria-expanded", String(isOpen));
-        });
-
-        menu.querySelectorAll("a").forEach(function (link) {
-            link.addEventListener("click", function () {
-                menu.classList.remove("menu-visible");
-                button.textContent = "☰";
-                button.setAttribute("aria-expanded", "false");
-            });
-        });
-    })();
-    </script>
-
-
-    <!-- ABOUT HERO -->
-    <main>
-
-        <section class="about-hero">
-
-            <div class="about-hero-content">
-
-                <span class="about-badge">
-                    ABOUT CYBERSAFE
-                </span>
-
-                <h1>
-                    Helping People Stay
-                    <span>Safe Online.</span>
-                </h1>
-
-                <p>
-                    CyberSafe is a cybersecurity awareness platform
-                    created to help users recognize, understand, and
-                    respond to common digital threats.
-                </p>
-
-            </div>
-
-        </section>
-
-
-        <!-- WHAT IS CYBERSAFE -->
-        <section class="about-content">
-
-            <div class="about-text">
-
-                <span class="section-label">
-                    OUR PLATFORM
-                </span>
-
-                <h2>
-                    What is CyberSafe?
-                </h2>
-
-                <p>
-                    CyberSafe is designed to make cybersecurity easier
-                    to understand for everyday users. The platform
-                    focuses on common threats such as phishing,
-                    digital arrest scams, malicious applications,
-                    suspicious messages, and deceptive URLs.
-                </p>
-
-                <p>
-                    Instead of simply showing a technical warning,
-                    CyberSafe provides understandable explanations
-                    and practical recommendations so users can make
-                    safer decisions before clicking, sharing
-                    information, or making payments.
-                </p>
-
-            </div>
-
-
-            <div class="about-visual">
-
-                <div class="shield-card">
-
-                    <div class="shield-large">
-                        🛡️
-                    </div>
-
-                    <h3>
-                        Think Before You Click.
-                    </h3>
-
-                    <p>
-                        Stop. Check. Verify. Protect.
-                    </p>
-
-                </div>
-
-            </div>
-
-        </section>
-
-
-        <!-- FEATURES -->
-        <section class="about-features">
-
-            <div class="section-heading">
-
-                <span class="section-label">
-                    WHAT WE PROVIDE
-                </span>
-
-                <h2>
-                    Built for Practical
-                    <span>Cyber Awareness.</span>
-                </h2>
-
-            </div>
-
-
-            <div class="feature-grid">
-
-                <div class="feature-card">
-
-                    <div class="feature-icon">
-                        🔍
-                    </div>
-
-                    <h3>
-                        Risk Analysis
-                    </h3>
-
-                    <p>
-                        Analyze suspicious messages and URLs
-                        using security indicators and receive
-                        a clear risk assessment.
-                    </p>
-
-                </div>
-
-
-                <div class="feature-card">
-
-                    <div class="feature-icon">
-                        🖼️
-                    </div>
-
-                    <h3>
-                        Screenshot Analysis
-                    </h3>
-
-                    <p>
-                        Upload a screenshot of a suspicious
-                        message and identify potentially risky
-                        content.
-                    </p>
-
-                </div>
-
-
-                <div class="feature-card">
-
-                    <div class="feature-icon">
-                        🎓
-                    </div>
-
-                    <h3>
-                        Awareness Center
-                    </h3>
-
-                    <p>
-                        Learn how phishing, digital arrest scams,
-                        and malicious applications target users.
-                    </p>
-
-                </div>
-
-
-                <div class="feature-card">
-
-                    <div class="feature-icon">
-                        🔐
-                    </div>
-
-                    <h3>
-                        Safety Guidance
-                    </h3>
-
-                    <p>
-                        Follow practical cybersecurity habits
-                        for safer browsing, payments, accounts,
-                        and mobile applications.
-                    </p>
-
-                </div>
-
-            </div>
-
-        </section>
-
-
-        <!-- HOW IT WORKS -->
-        <section class="about-process">
-
-            <div class="section-heading">
-
-                <span class="section-label">
-                    OUR APPROACH
-                </span>
-
-                <h2>
-                    Simple Steps.
-                    <span>Better Decisions.</span>
-                </h2>
-
-            </div>
-
-
-            <div class="process-grid">
-
-                <div class="process-step">
-
-                    <span>01</span>
-
-                    <h3>
-                        Recognize
-                    </h3>
-
-                    <p>
-                        Identify suspicious messages,
-                        links, requests, or applications.
-                    </p>
-
-                </div>
-
-
-                <div class="process-step">
-
-                    <span>02</span>
-
-                    <h3>
-                        Analyze
-                    </h3>
-
-                    <p>
-                        Check the content for common
-                        cybersecurity risk indicators.
-                    </p>
-
-                </div>
-
-
-                <div class="process-step">
-
-                    <span>03</span>
-
-                    <h3>
-                        Understand
-                    </h3>
-
-                    <p>
-                        Read the reasons behind the
-                        detected risk instead of relying
-                        only on a score.
-                    </p>
-
-                </div>
-
-
-                <div class="process-step">
-
-                    <span>04</span>
-
-                    <h3>
-                        Protect
-                    </h3>
-
-                    <p>
-                        Follow the recommended actions
-                        before interacting with the content.
-                    </p>
-
-                </div>
-
-            </div>
-
-        </section>
-
-
-        <!-- DISCLAIMER -->
-        <section class="about-disclaimer">
-
-            <div>
-
-                <span class="section-label">
-                    IMPORTANT
-                </span>
-
-                <h2>
-                    CyberSafe is an Awareness Tool.
-                </h2>
-
-                <p>
-                    CyberSafe provides educational risk indicators
-                    and cybersecurity guidance. A result should not
-                    be treated as a guarantee that content is safe
-                    or malicious. When in doubt, verify information
-                    through official sources.
-                </p>
-
-            </div>
-
-        </section>
-
-    </main>
-
-
-    <!-- FOOTER -->
-    <footer class="about-footer">
-
-        <div>
-            <strong>CyberSafe</strong>
-            <span>
-                Cybersecurity Awareness Platform
-            </span>
-        </div>
-
-        <p>
-            Think Before You Click.
+        <p class="intro">
+            Have a question or need assistance?
+            Our support team is available to help.
+            Reach out to us through email.
         </p>
 
-    </footer>
+        <div class="email-card">
 
+            <div class="email-heading">
+
+                <div class="email-icon">
+                    <svg viewBox="0 0 24 24" fill="none"
+                         stroke="currentColor" stroke-width="1.8"
+                         stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="3" y="5" width="18" height="14" rx="2"/>
+                        <path d="m3 7 9 6 9-6"/>
+                    </svg>
+                </div>
+
+                <div>
+                    <h2>Email Support</h2>
+                    <p>Official CyberSafe support channel</p>
+                </div>
+
+            </div>
+
+            <p class="email-label">SUPPORT EMAIL ADDRESS</p>
+
+            <a class="email-address"
+               href="https://mail.google.com/mail/?view=cm&fs=1&to=cybersafe.support@gmail.com"
+               target="_blank"
+               rel="noopener noreferrer">
+                cybersafe.support@gmail.com
+            </a>
+
+            <div class="card-divider"></div>
+
+            <a class="send-button"
+               href="https://mail.google.com/mail/?view=cm&fs=1&to=cybersafe.support@gmail.com"
+               target="_blank"
+               rel="noopener noreferrer">
+
+                <svg viewBox="0 0 24 24" fill="none"
+                     stroke="currentColor" stroke-width="2"
+                     stroke-linecap="round" stroke-linejoin="round">
+                    <path d="m22 2-7 20-4-9-9-4Z"/>
+                    <path d="M22 2 11 13"/>
+                </svg>
+
+                Send an Email
+            </a>
+
+            <p class="note">
+                Clicking the email address or button opens
+                Gmail with our support address pre-filled.
+            </p>
+
+        </div>
+
+    </section>
+
+</main>
+
+<!-- FOOTER -->
+<footer class="footer">
+
+    <div>
+        <strong>CyberSafe</strong>
+        <p>Cybersecurity Awareness Platform</p>
+    </div>
+
+    <span>© 2026 CyberSafe. All rights reserved.</span>
+
+    <p>Think Before You Click.</p>
+
+</footer>
+
+<script>
+const menuBtn = document.getElementById("menuBtn");
+const navLinks = document.getElementById("navLinks");
+
+menuBtn.addEventListener("click", () => {
+    const isOpen = navLinks.classList.toggle("show");
+
+    menuBtn.textContent = isOpen ? "✕" : "☰";
+    menuBtn.setAttribute("aria-expanded", String(isOpen));
+});
+
+navLinks.querySelectorAll("a").forEach(link => {
+    link.addEventListener("click", () => {
+        navLinks.classList.remove("show");
+        menuBtn.textContent = "☰";
+        menuBtn.setAttribute("aria-expanded", "false");
+    });
+});
+</script>
 
 </body>
-
 </html>
